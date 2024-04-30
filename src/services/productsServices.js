@@ -23,9 +23,7 @@ export const getProductById = async (pid) => {
 
 export const addProduct = async (productData) => {
     try {
-        // Guardar el producto en la base de datos
         await productDAO.addProduct(productData);
-        // Resto del código, si lo hay
     } catch (error) {
         throw new Error(error.message);
     }

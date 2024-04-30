@@ -15,5 +15,4 @@ switch (DAO_OPTION) {
     productDAO = new productsMongoose();
 }
 
-// Exporta el DAO seleccionado para el acceso a los productos
 export {productDAO};

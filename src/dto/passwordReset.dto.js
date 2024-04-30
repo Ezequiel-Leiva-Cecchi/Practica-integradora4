@@ -1,4 +1,3 @@
-// passwordReset.dto.js
 export class PasswordResetDTO {
     constructor({ userId, token }) {
         this.userId = userId;

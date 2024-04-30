@@ -32,8 +32,6 @@ const initializePassport = () => {
                     password: hashedPassword,
                 });
 
-              
-
                 // Crear un carrito para el nuevo usuario registrado
                 const newCart = await cartDAO.createCart();
                 await usersDAO.updateUserCart(newUser._id, newCart._id);
@@ -55,16 +53,16 @@ const initializePassport = () => {
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log('GitHub Profile:', profile); // Imprime el perfil de GitHub
-                const user = await usersDAO.getUserByEmail({ email: profile._json.email }); // Busca el usuario por correo electrónico
+                console.log('GitHub Profile:', profile); 
+                const user = await usersDAO.getUserByEmail({ email: profile._json.email }); 
                 if (user) {
-                    return done(null, user); // Si el usuario ya existe, devuelve el usuario
+                    return done(null, user); 
                 }
-                const newUser = await usersDAO.addUsers({ // Agrega un nuevo usuario si no existe en la base de datos
+                const newUser = await usersDAO.addUsers({ 
                     first_name: profile._json.name,
                     last_name: '',
-                    email: profile._json.email || profile.username, // Usa el correo electrónico o el nombre de usuario como correo electrónico
-                    password: 'CreateWithGithub', // Contraseña predeterminada para usuarios de GitHub
+                    email: profile._json.email || profile.username, 
+                    password: 'CreateWithGithub', 
                 });
                 return done(null, newUser);
             } catch (error) {

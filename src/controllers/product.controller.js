@@ -1,7 +1,7 @@
 import * as productsServices from '../services/productsServices.js';
 import { validateAddProducts, validateEditProducts } from "../utils/validation.js"; 
 
-// Función para verificar si un usuario es propietario del producto
+
 const isProductOwner = async (productId, userId) => {
     const product = await productsServices.getProductById(productId);
     return product.owner === userId;
@@ -39,8 +39,7 @@ export const addProduct = async (req, res, next) => {
         if (absentProperty) {
             throw new Error(`Absent property ${absentProperty}`);
         }
-        
-        // Verificar si el usuario es premium para asignarlo como propietario del producto
+
         const owner = user.isPremium ? user.email : 'admin';
 
         const productData = { ...body, owner };

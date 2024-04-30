@@ -50,9 +50,9 @@ const hbs = handlebars.create({
         allowProtoPropertiesByDefault: true
     }
 });
-app.engine('handlebars', hbs.engine);
-app.set('views', 'src/views');
+app.engine('handlebars', hbs.engine); 
 app.set('view engine', 'handlebars');
+app.set('views', 'src/views');
 
 // Configuracion del Api 
 const specs = swaggerJSDoc(swaggerConfiguration);

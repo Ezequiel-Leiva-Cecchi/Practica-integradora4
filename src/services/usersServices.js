@@ -18,7 +18,6 @@ export const register = async (userData) => {
             userData.isAdmin = false;
         }
         
-        // Hashear la contraseña antes de almacenarla en la base de datos
         userData.password = createHash(userData.password);
         
         const newUser = await usersDAO.createUser(userData);

@@ -42,7 +42,6 @@ export const renderCartPage = async (req, res, next) => {
     try {
         const { cartId } = req.params;
         const cart = await cartDAO.getCartsById(cartId);
-        // Verifica si el carrito existe antes de intentar acceder a sus productos
         if (!cart) {
             throw new Error('Cart not found');
         }

@@ -3,10 +3,7 @@ import { sendPasswordResetEmail, resetPassword } from '../controllers/passwordRe
 
 const router = express.Router();
 
-// Ruta para enviar un correo electrónico de restablecimiento de contraseña
 router.post('/reset/send-email', sendPasswordResetEmail);
-
-// Ruta para restablecer la contraseña con un token
 router.post('/reset', resetPassword);
 
 export default router;
