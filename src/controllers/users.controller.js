@@ -1,5 +1,5 @@
 import passport from "passport";
-import * as userService from '../services/usersServices.js';
+import * as usersService from '../services/usersServices.js';
 
 export const register = async (req, res, next) => {
     try {
