@@ -1,6 +1,5 @@
 import passport from "passport";
-import { UserWithoutPasswordDTO } from '../dto/userWithoutPassword.dto.js';
-import * as userService from '../services/userService.js';
+import * as userService from '../services/usersServices.js';
 
 export const register = async (req, res, next) => {
     try {
@@ -71,12 +70,21 @@ export const loginWithGithub = (req, res, next) => {
     })(req, res, next);
 };
 
-export const upgradeToPremium = async (req, res, next) => {
+export const createAdmin = async (req, res, next) => {
     try {
-        const userId = req.params.userId;
-        const updatedUser = await userService.upgradeUserToPremium(userId);
-        res.status(200).json({ message: 'User upgraded to premium successfully', user: updatedUser });
+        if (!req.session.user || req.session.user.role !== 'Admin') {
+            return res.status(403).json({ error: 'Forbidden. Admin access required.' });
+        }
+        const { first_name, last_name, email, password } = req.body;
+        const existingUser = await usersDAO.findUserByEmail(email);
+        if (existingUser) {
+            return res.status(400).json({ error: 'User with this email already exists.' });
+        }
+
+        const newUser = await usersService.registerAdmin({ first_name, last_name, email, password });       
+        res.status(201).json({ message: 'Admin user created successfully', user: newUser });
     } catch (error) {
+        console.error("Error creating admin user:", error);
         res.status(400).json({ error: error.message });
     }
 };

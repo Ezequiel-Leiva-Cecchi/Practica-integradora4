@@ -27,10 +27,6 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ['User', 'Admin'],
         default: 'User'
-    },
-    premium: {
-        type: Boolean,
-        default: false  
     }
 });
 

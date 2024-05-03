@@ -8,7 +8,6 @@ import { isValidPassword , createHash } from "../utils/bcrypt.js";
 const localStrategy = LocalStrategy;
 
 const initializePassport = () => {
-    // Estrategia para el registro de usuarios
     passport.use('register', new localStrategy(
         { passReqToCallback: true, usernameField: 'email' },
         async (req, username, password, done) => {
@@ -21,8 +20,6 @@ const initializePassport = () => {
                     return done(null, false);
                 }
                 console.log('Creating new user:', email);
-
-                // Obtener el hash de la contraseña
                 const hashedPassword = createHash(password);
                 
                 const newUser = await usersDAO.addUsers({
@@ -32,7 +29,6 @@ const initializePassport = () => {
                     password: hashedPassword,
                 });
 
-                // Crear un carrito para el nuevo usuario registrado
                 const newCart = await cartDAO.createCart();
                 await usersDAO.updateUserCart(newUser._id, newCart._id);
 
@@ -44,7 +40,28 @@ const initializePassport = () => {
         }
     ));
 
-    // Estrategia para la autenticación con GitHub
+    passport.use('login', new LocalStrategy(
+        {
+          usernameField: 'email',
+          passwordField: 'password'
+        },
+        async (email, password, done) => {
+          try {
+            const user = await usersDAO.getUserByEmail(email);
+            if (!user) {
+              return done(null, false, { message: 'Incorrect email or password' });
+            }
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (!isValidPassword) {
+              return done(null, false, { message: 'Incorrect email or password' });
+            }
+            return done(null, user);
+          } catch (error) {
+            return done(error);
+          }
+        }
+      ));
+      
     passport.use('github', new GithubStrategy(
         {
             clientID: 'Iv1.967e1f2adf04d46b',

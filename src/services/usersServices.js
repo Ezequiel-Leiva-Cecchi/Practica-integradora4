@@ -68,3 +68,22 @@ export const upgradeUserToPremium = async (userId) => {
         throw new Error(error.message);
     }
 };
+export const registerAdmin = async (userData) => {
+    try {
+        const existingUser = await usersDAO.findUserByEmail(userData.email);
+        if (existingUser) {
+            throw new Error('User with this email already exists.');
+        }        
+        const hashedPassword = createHash(userData.password);
+        const newUser = await usersDAO.createUser({
+            ...userData,
+            password: hashedPassword,
+            role: 'Admin'
+        });
+        console.log("Admin user registered successfully:", newUser);
+        return newUser;
+    } catch (error) {
+        console.error("Error registering admin user:", error);
+        throw new Error('Failed to register admin user');
+    }
+};
