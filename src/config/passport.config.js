@@ -78,8 +78,8 @@ const initializePassport = () => {
 
     // Deserializa el usuario de la sesión
     passport.deserializeUser(async (id, done) => {
-        const user = await usersDAO.getUserById(id); // Obtiene el usuario por ID
-        done(null, user); // Devuelve el usuario
+        const user = await usersDAO.getUserById(id); 
+        done(null, user); 
     });
 };
 

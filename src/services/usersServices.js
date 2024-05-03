@@ -68,13 +68,3 @@ export const upgradeUserToPremium = async (userId) => {
         throw new Error(error.message);
     }
 };
-export const registerAdmin = async (userData) => {
-    try {
-        userData.role = 'Admin';
-        const newUser = await usersDAO.createUser(userData);
-        return newUser;
-    } catch (error) {
-        console.error('Error registering admin user:', error);
-        throw new Error('Failed to register admin user');
-    }
-};

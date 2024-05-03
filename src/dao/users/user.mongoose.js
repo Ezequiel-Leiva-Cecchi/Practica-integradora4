@@ -43,14 +43,4 @@ export class usersMongoose {
         }
         return user; 
     }
-    async registerAdmin(userData) {
-        try {
-            userData.role = 'Admin';    
-            const newUser = new usersModel(userData);
-            await newUser.save();
-            return newUser.toObject();
-        } catch (error) {
-            throw new Error('Failed to register admin user');
-        }
-    }
 }

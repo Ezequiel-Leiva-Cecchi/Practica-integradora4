@@ -1,6 +1,6 @@
 import passport from "passport";
-
-import { UserDTO } from '../dto/user.dto.js';
+import { UserWithoutPasswordDTO } from '../dto/userWithoutPassword.dto.js';
+import * as userService from '../services/userService.js';
 
 export const register = async (req, res, next) => {
     try {
@@ -70,6 +70,7 @@ export const loginWithGithub = (req, res, next) => {
         res.status(200).json({ msg: "User logged in with Github successfully" });
     })(req, res, next);
 };
+
 export const upgradeToPremium = async (req, res, next) => {
     try {
         const userId = req.params.userId;
@@ -83,27 +84,10 @@ export const upgradeToPremium = async (req, res, next) => {
 export const getCurrentUser = async (req, res, next) => {
     try {
         const currentUser = req.session.user;
-        const currentUserDTO = UserDTO.fromModel(currentUser);
+        const currentUserDTO = UserWithoutPasswordDTO.fromModel(currentUser);
         res.status(200).json(currentUserDTO);
     } catch (error) {
         console.error("Error obteniendo el usuario actual:", error);
         res.status(400).json({ error: error.message });
-    }
-};
-export const registerAdmin = async (req, res) => {
-    try {
-        if (req.session.user.role !== 'Admin') {
-            return res.status(403).json({ error: 'Forbidden. Admin access required.' });
-        }
-
-        const { first_name, last_name, email, password } = req.body;
-        const userData = { first_name, last_name, email, password };
-
-        const newUser = await usersService.registerAdmin(userData);
-
-        res.status(201).json({ message: 'Admin user created successfully', user: newUser });
-    } catch (error) {
-        console.error('Error creating admin user:', error);
-        res.status(500).json({ error: 'Failed to create admin user' });
     }
 };
