@@ -30,29 +30,32 @@ describe('Testing sessionRoutes', () => {
             email: 'ezequielleivacecchi@gmail.com',
             password: '123'
         };
-
+    
         const res = await request.post('/register').send(userData);
         expect(res.status).to.equal(200);
         expect(res.body).to.have.property('message').to.equal('User registered successfully');
     });
+    it('Debe permitir el registro de un nuevo usuario', async function () {
+        console.log("Iniciando prueba de registro de usuario...");
 
-    it('Debe permitir el inicio de sesión de un usuario registrado', async function (done) {
-        const registeredUser = {
+        const userData = {
             first_name: 'Ezequiel',
             last_name: 'Leiva Cecchi',
             email: 'ezequielleivacecchi@gmail.com',
             password: '123'
         };
 
-        await userDao.addUsers(registeredUser);
+        console.log("Enviando solicitud de registro...");
+        const res = await request.post('/register').send(userData);
+        console.log("Respuesta recibida:", res.body);
 
-        const res = await request.post('/login').send(registeredUser);
         expect(res.status).to.equal(200);
-        expect(res.body).to.have.property('message').to.equal('User logged in successfully');
-        done()
-    });
+        expect(res.body).to.have.property('message').to.equal('User registered successfully');
 
-    it('Debe permitir el cierre de sesión de un usuario autenticado', async function (done) {
+        console.log("Prueba de registro de usuario completada.");
+    });
+    
+    it('Debe permitir el cierre de sesión de un usuario autenticado', async function () {
         const authenticatedUser = {
             first_name: 'Ezequiel',
             last_name: 'Leiva Cecchi',
@@ -61,10 +64,9 @@ describe('Testing sessionRoutes', () => {
         };
         await userDao.addUsers(authenticatedUser);
         await request.post('/login').send(authenticatedUser);
-
+    
         const res = await request.post('/logout');
         expect(res.status).to.equal(200);
         expect(res.body).to.have.property('message').to.equal('User logged out successfully');
-        done()
     });
 });

@@ -1,37 +1,17 @@
-import { usersDAO } from '../dao/users/indexUsers.js'; 
-import * as cartService from '../services/cartService.js';
+import { usersDAO } from '../dao/users/indexUsers.js';
 import { createHash } from '../utils/bcrypt.js';
 
 export const register = async (userData) => {
     try {
-        const existingUser = await usersDAO.findUserByEmail(userData.email);
-        if (existingUser) {
-            throw new Error('User already exists');
-        }
-       
-        if (
-            userData.email === 'adminCoder@coder.com' &&
-            userData.password === 'adminCod3r123'
-        ) {
-            userData.isAdmin = true;
-        } else {
-            userData.isAdmin = false;
-        }
-        
-        userData.password = createHash(userData.password);
-        
-        const newUser = await usersDAO.createUser(userData);
-        
-        const newCart = await cartService.createCart();
-        await usersDAO.updateUserCart(newUser._id, newCart._id); 
-
-        console.log("User registered successfully:", newUser);
-        return newUser;
+    const existingUser = await usersDAO.getUserByEmail(userData);
+    if (existingUser) {
+      throw new Error('El correo electrónico ya está en uso');
+    }
     } catch (error) {
-        console.error("Error registering user:", error);
-        throw new Error('Failed to register');
+        throw new Error('Error al registrar usuario');
     }
 };
+
 
 export const login = async (userData) => {
     try {
@@ -66,24 +46,5 @@ export const upgradeUserToPremium = async (userId) => {
         return updatedUser;
     } catch (error) {
         throw new Error(error.message);
-    }
-};
-export const registerAdmin = async (userData) => {
-    try {
-        const existingUser = await usersDAO.findUserByEmail(userData.email);
-        if (existingUser) {
-            throw new Error('User with this email already exists.');
-        }        
-        const hashedPassword = createHash(userData.password);
-        const newUser = await usersDAO.createUser({
-            ...userData,
-            password: hashedPassword,
-            role: 'Admin'
-        });
-        console.log("Admin user registered successfully:", newUser);
-        return newUser;
-    } catch (error) {
-        console.error("Error registering admin user:", error);
-        throw new Error('Failed to register admin user');
     }
 };

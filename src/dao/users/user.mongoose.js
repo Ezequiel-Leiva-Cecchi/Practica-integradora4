@@ -31,16 +31,22 @@ export class usersMongoose {
             throw new Error('Error updating user cart');
         }
     }
+    
+    async createUser(userData) {
+        try {
+            const newUser = await usersModel.create(userData);
+            return newUser.toObject({ virtuals: true });
+        } catch (error) {
+            throw new Error('Error creating user');
+        }
+    }
 
-    async findUserByEmailAndPassword(email, password) {
-        const user = await usersModel.findOne({ email });
+    async findUserByEmail(email) {
+        const user = await usersModel.findOne({email});
         if (!user) {
             return null; 
-        }
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return null;
-        }
-        return user; 
+        }else{
+            return user;
+        } 
     }
 }
