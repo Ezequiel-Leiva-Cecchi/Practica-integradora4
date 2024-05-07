@@ -3,7 +3,7 @@ import { createHash } from '../utils/bcrypt.js';
 
 export const register = async (userData) => {
     try {
-        const existingUser = await usersDAO.getUserByEmail(userData);
+        const existingUser = await usersDAO.findUserByEmail(userData);
         if (existingUser) {
             throw new Error('El correo electrónico ya está en uso');
         } else {
@@ -18,7 +18,7 @@ export const register = async (userData) => {
 
 export const login = async (userData) => {
     try {
-        const existingUser = await usersDAO.findUserByEmailAndPassword(userData.email, userData.password);
+        const existingUser = await usersDAO.findUserByEmail(userData.email);
         if (!existingUser) {
             throw new Error('Invalid email or password');
         }
