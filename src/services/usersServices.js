@@ -3,10 +3,13 @@ import { createHash } from '../utils/bcrypt.js';
 
 export const register = async (userData) => {
     try {
-    const existingUser = await usersDAO.getUserByEmail(userData);
-    if (existingUser) {
-      throw new Error('El correo electrónico ya está en uso');
-    }
+        const existingUser = await usersDAO.getUserByEmail(userData);
+        if (existingUser) {
+            throw new Error('El correo electrónico ya está en uso');
+        } else {
+            const newUser = await usersDAO.createUser(userData);
+            return newUser;
+        }
     } catch (error) {
         throw new Error('Error al registrar usuario');
     }
