@@ -79,13 +79,3 @@ export const createAdmin = async (req, res, next) => {
     }
 };
 
-
-export const getCurrentUser = async (req, res, next) => {
-    try {
-        const currentUser = req.session.user;
-        res.status(200).json(currentUser);
-    } catch (error) {
-        console.error("Error obtaining current user:", error);
-        res.status(400).json({ error: error.message });
-    }
-};
