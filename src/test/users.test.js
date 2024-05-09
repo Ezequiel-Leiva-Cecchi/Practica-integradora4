@@ -30,10 +30,13 @@ describe('Testing sessionRoutes', () => {
             email: 'ezequielleivacecchi@gmail.com',
             password: '123'
         };
-    
-        const res = await request.post('/register').send(userData);
-        expect(res.status).to.equal(200);
-        expect(res.body).to.have.property('message').to.equal('User registered successfully');
+        const response = await request
+        .post('/register')
+        .send(userData)
+        .expect('Content-Type', /json/)
+        // const res = await request.post('/register').send(userData);
+        expect(response.status).to.equal(200);
+        expect(response.body).to.have.property('message').to.equal('User registered successfully');
     });
     it('Debe permitir el registro de un nuevo usuario', async function () {
         console.log("Iniciando prueba de registro de usuario...");

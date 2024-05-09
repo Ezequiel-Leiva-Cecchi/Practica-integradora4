@@ -6,13 +6,14 @@ export const requireAuth = (req, res, next) => {
 };
 
 export const checkExistingUser = (req, res, next) => {
-    if (req.session.user && (req.path === '/login' || req.path === '/register')) {
+    if (req.session.user) {
         return res.redirect('/');
     }
     next();
 };
 
 export const requireAdminAuth = (req, res, next) => {
+    console.log()
     if (req.session.user && req.session.user.role === 'Admin') {
         return next();
     }

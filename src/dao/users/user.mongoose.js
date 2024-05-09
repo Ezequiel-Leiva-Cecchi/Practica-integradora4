@@ -2,21 +2,8 @@ import { usersModel } from "../../models/users.model.js";
 import bcrypt from 'bcrypt';
 
 export class usersMongoose {
-    async addUsers(object) {
-        const users = new usersModel(object);
-        await users.save()
-        return users.toObject({ virtuals: true });
-    }
-
     async getUserById(id) {
         return await usersModel.findOne({ _id: id }).lean({ virtuals: true });
-    }
-
-    async getUserByEmail({email}) { 
-        console.log(`Searching for user with email: ${email}`);
-        const user = await usersModel.findOne({ email }).lean({ virtuals: true });
-        console.log('User found:', user);
-        return user;
     }
 
     async updateUserCart(userId, cartId) {
@@ -28,15 +15,18 @@ export class usersMongoose {
             );
             return user;
         } catch (error) {
+            console.error(error);
             throw new Error('Error updating user cart');
         }
     }
     
     async createUser(userData) {
         try {
+            console.log(userData);
             const newUser = await usersModel.create(userData);
             return newUser.toObject({ virtuals: true });
         } catch (error) {
+            console.error(error);
             throw new Error('Error creating user');
         }
     }
@@ -48,5 +38,15 @@ export class usersMongoose {
         }else{
             return user;
         } 
+    }
+    
+    async getAllUsers(){
+        try {
+            const user=await usersModel.find({first_name,last_name,email});
+            return user;   
+        } catch (error) {
+            console.error(error);
+            throw new Error('Error getting user');
+        }
     }
 }

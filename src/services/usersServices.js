@@ -3,15 +3,23 @@ import { createHash } from '../utils/bcrypt.js';
 
 export const register = async (userData) => {
     try {
-        const existingUser = await usersDAO.findUserByEmail(userData);
+        const existingUser = await usersDAO.findUserByEmail(userData.email);
         if (existingUser) {
-            throw new Error('El correo electrónico ya está en uso');
+            console.log(existingUser);
+            throw new Error('Email is already in use');
         } else {
-            const newUser = await usersDAO.createUser(userData);
-            return newUser;
+            const hashedPassword = createHash(userData.password)
+            console.log("UserData" + JSON.stringify(userData));
+            const newUser = {
+                ...userData,
+                password: hashedPassword
+            };
+            const createdUser = await usersDAO.createUser(newUser);
+            return createdUser;
         }
     } catch (error) {
-        throw new Error('Error al registrar usuario');
+        console.error(error);
+        throw new Error('Error registering user');
     }
 };
 
@@ -48,6 +56,7 @@ export const upgradeUserToPremium = async (userId) => {
         const updatedUser = await usersDAO.upgradeToPremium(userId);
         return updatedUser;
     } catch (error) {
+        console.error(error);
         throw new Error(error.message);
     }
 };

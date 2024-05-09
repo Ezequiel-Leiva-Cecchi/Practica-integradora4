@@ -1,10 +1,11 @@
 import passport from "passport";
 import * as usersService from '../services/usersServices.js';
+import { usersDAO } from "../dao/users/indexUsers.js";
 
 export const register = async (req, res) => {
     try {
       const userData = req.body;
-      const newUser = await usersService.register(userData);
+      const newUser = await usersService.register(userData); 
       res.status(201).json({ message: 'Usuario registrado exitosamente', user: newUser });
     } catch (error) {
       console.error('Error al registrar usuario:', error);
@@ -79,3 +80,12 @@ export const createAdmin = async (req, res, next) => {
     }
 };
 
+export const getAllUsers = async(req,res) => {
+    try {
+        const users = await usersDAO.getAllUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error obteniendo usuarios:', error);
+        res.status(500).json({error:'Error interno del servidor'});
+    }
+};
