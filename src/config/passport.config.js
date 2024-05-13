@@ -16,6 +16,7 @@ const initializePassport = () => {
         async (req, email, password, done) => {
             try {
                 const userData = req.body;
+                console.log(userData);
                 const newUser = await usersService.register(userData); 
                 return done(null, newUser);
             } catch (error) {

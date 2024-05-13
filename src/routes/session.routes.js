@@ -6,7 +6,7 @@ import { register, login, logout, loginWithGithub, createAdmin,getAllUsers } fro
 
 const sessionRoutes = Router();
 
-sessionRoutes.post('/register', /*passport.authenticate('register', { failureRedirect: '/failregister' }),*/ register); // correguir para que se usen ambos (decidir cual va tener la logica en su interior)
+sessionRoutes.post('/register', passport.authenticate('register', { failureRedirect: '/failregister' }), register); 
 sessionRoutes.post('/login', passport.authenticate('login'), login);
 sessionRoutes.post('/logout', requireAuth, logout);
 sessionRoutes.get('/github', passport.authenticate('github', { scope: ['user:email'] }));

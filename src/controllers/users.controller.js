@@ -8,7 +8,7 @@ export const register = async (req, res) => {
       const newUser = await usersService.register(userData); 
       res.status(201).json({ message: 'Usuario registrado exitosamente', user: newUser });
     } catch (error) {
-      console.error('Error al registrar usuario:', error);
+      console.error( "this is the error" , error);
       res.status(500).json({ error: 'Error interno del servidor' });
     }
   };

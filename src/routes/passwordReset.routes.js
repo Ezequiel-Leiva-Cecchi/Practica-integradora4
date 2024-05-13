@@ -1,9 +1,8 @@
-import express from 'express';
-import { sendPasswordResetEmail, resetPassword } from '../controllers/passwordReset.controller.js';
+import { Router } from 'express';
+import {sendEmailRecoveryPassword} from '../controllers/passwordReset.controller.js';
 
-const router = express.Router();
+const passwordResetRouter = Router();
 
-router.post('/reset/send-email', sendPasswordResetEmail);
-router.post('/reset', resetPassword);
+passwordResetRouter.post('/send-email',sendEmailRecoveryPassword);
 
-export default router;
+export default passwordResetRouter;

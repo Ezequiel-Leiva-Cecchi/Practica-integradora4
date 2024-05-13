@@ -4,21 +4,30 @@ import { createHash } from '../utils/bcrypt.js';
 export const register = async (userData) => {
     try {
         const existingUser = await usersDAO.findUserByEmail(userData.email);
+
         if (existingUser) {
             console.log(existingUser);
             throw new Error('Email is already in use');
-        } else {
-            const hashedPassword = createHash(userData.password)
-            console.log("UserData" + JSON.stringify(userData));
-            const newUser = {
-                ...userData,
-                password: hashedPassword
-            };
-            const createdUser = await usersDAO.createUser(newUser);
-            return createdUser;
         }
+
+        let isAdmin = "User"; 
+
+        if (userData.email === "adminCoder@coder.com" && userData.password === "adminCod3r123") {
+            isAdmin = "Admin"; 
+        }
+
+        const hashedPassword = createHash(userData.password);
+
+        const newUser = {
+            ...userData,
+            isAdmin: isAdmin, 
+            password: hashedPassword
+        };
+
+        const createdUser = await usersDAO.createUser(newUser);
+        return createdUser;
     } catch (error) {
-        console.error(error);
+        console.error("this is the other error:",error);
         throw new Error('Error registering user');
     }
 };

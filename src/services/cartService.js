@@ -1,5 +1,5 @@
 import { cartDAO } from '../dao/cart/indexCart.js'; 
-
+import { productDAO } from '../dao/product/indexProducts.js';
 export const createCart = async () => {
     try {
         const newCart = await cartDAO.createCart();
@@ -25,19 +25,40 @@ export const getCartById = async (cid) => {
 
 export const addProductToCart = async (cid, pid) => {
     try {
-        await cartDAO.addProductCarts(cid, pid);
+        const cart = await cartDAO.getCartById(cid);
+        const product = await productDAO.getProductById(pid);
+        
+        if (!cart || !product) {
+            throw new Error('Cart or product not found');
+        }
+
+        if (product.stock < 1) {
+            throw new Error('Product out of stock');
+        }
+
+        const existProductInCartIndex = cart.products.findIndex(item => item.product.toString() === pid);
+        if (existProductInCartIndex >= 0) {
+            cart.products[existProductInCartIndex].quantity++;
+        } else {
+            cart.products.push({ product: product._id, quantity: 1 });
+        }
+
+        product.stock--;
+        await product.save();
+
+        await cart.save();
     } catch (error) {
-    
-        console.error(`Error adding product to cart. Cart ID: ${cid}, Product ID: ${pid}.`);
-        console.error('Original error:', error);
-        throw new Error('Failed to add product to cart');
+        console.error(error)
+        throw new Error('Failed to add product to cart: ' + error.message);
     }
 };
+
 
 export const deleteCart = async (cid) => {
     try {
         await cartDAO.deleteCart(cid);
     } catch (error) {
+        console.log(error);
         throw new Error('Failed to delete cart');
     }
 };
