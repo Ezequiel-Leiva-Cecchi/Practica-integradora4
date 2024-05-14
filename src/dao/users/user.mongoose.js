@@ -49,4 +49,7 @@ export class usersMongoose {
             throw new Error('Error getting user');
         }
     }
+    async deleteInactiveUsers(){
+        
+    }
 }

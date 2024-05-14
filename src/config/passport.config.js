@@ -1,27 +1,27 @@
 import passport from "passport";
+import bcrypt from "bcrypt";
+
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 
 import * as usersService from '../services/usersServices.js';
 import { usersDAO } from "../dao/users/indexUsers.js";
-import { cartDAO } from "../dao/cart/indexCart.js";
-import { isValidPassword, createHash } from "../utils/bcrypt.js";
-import bcrypt from "bcrypt";
+
 
 const localStrategy = LocalStrategy;
 
 const initializePassport = () => {
     passport.use('register', new localStrategy(
         { passReqToCallback: true, usernameField: 'email' },
-        async (req, email, password, done) => {
+        async (req,res) => {
             try {
                 const userData = req.body;
                 console.log(userData);
                 const newUser = await usersService.register(userData); 
-                return done(null, newUser);
+                res.status(201).json({ message: 'Successfully registered user', user: newUser });
             } catch (error) {
                 console.error(error);
-                return done(error);
+                res.status(500).json({ error: 'Internal Server Error' });
             }
         }
     ));

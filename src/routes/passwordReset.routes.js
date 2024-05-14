@@ -4,5 +4,4 @@ import {sendEmailRecoveryPassword} from '../controllers/passwordReset.controller
 const passwordResetRouter = Router();
 
 passwordResetRouter.post('/send-email',sendEmailRecoveryPassword);
-
 export default passwordResetRouter;
