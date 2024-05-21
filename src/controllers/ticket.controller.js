@@ -1,47 +1,26 @@
-import { ticketDAO } from "../dao/ticket/index.js";
+import * as ticketService from '../services/ticketService.js';
+import { cartDAO } from '../dao/cart/indexCart.js';
 
-export const getTickets = async (req, res, next) => {
+export const generateTicketController = async (req, res, next) => {
     try {
-        const tickets = await ticketDAO.getTickets(); 
-        res.json({ tickets }); 
-    } catch (error) {
-        res.json({ error: error.message }); 
-    }
-};
+        const { cid, purchaseDatetime, amount, purchaser } = req.body;
 
-export const getTicketById = async (req, res, next) => {
-    try {
-        const { ticketId } = req.params; 
-        const ticket = await ticketDAO.getTicketById(ticketId); 
-        if (!ticket) {
-            throw new Error('TICKET NOT FOUND'); 
+        // Verificar si se proporcionaron todos los datos necesarios
+        if (!cid || !purchaseDatetime || !amount || !purchaser) {
+            return res.status(400).json({ error: 'Missing required fields' });
         }
-        res.json({ ticket }); 
-    } catch (error) {
-        res.json({ error: error.message }); 
-    }
-};
 
-export const addTicket = async (req, res, next) => {
-    try {
-        const ticketData = req.body; 
-        const newTicket = await ticketDAO.addTicket(ticketData); 
-        res.json({ message: 'Successfully add ticket', ticket: newTicket }); 
-    } catch (error) {
-        res.json({ error: error.message }); 
-    }
-};
-
-export const deleteTicket = async (req, res, next) => {
-    try {
-        const { ticketId } = req.params; 
-        const deletedTicket = await ticketDAO.deleteTicket(ticketId); 
-        if (!deletedTicket) {
-            throw new Error('TICKET NOT FOUND'); 
+        // Verificar si el carrito existe
+        const cart = await cartDAO.getCartById(cid);
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found' });
         }
-        res.json({ message: 'Successfully delete ticket' }); 
+
+        // Generar el ticket
+        const ticket = await ticketService.generateTicket(cid, purchaseDatetime, amount, purchaser);
+        res.json({ message: 'Ticket generated successfully', ticket });
     } catch (error) {
-        res.json({ error: error.message }); 
+        console.error(error);
+        res.status(500).json({ error: error.message });
     }
 };
-

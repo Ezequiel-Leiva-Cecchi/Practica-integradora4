@@ -1,6 +1,6 @@
 import cartModel from "../../models/carts.model.js";
 import { productDAO } from "../product/indexProducts.js";
-import mongoose from 'mongoose';
+import ticketModel from "../../models/ticket.model.js";
 
 export class cartMongoose {
     async getCartById(cid) {
@@ -79,6 +79,45 @@ export class cartMongoose {
             return newCart;
         } catch (error) {
             throw new Error('Error creating cart: ' + error.message);
+        }
+    }
+
+    async finalizePurchase(cid, userId) {
+        try {
+            const cart = await this.getCartById(cid);
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+
+            let totalAmount = 0;
+            const failedProducts = [];
+
+            for (const item of cart.products) {
+                const product = await productDAO.getProductById(item.product._id);
+                if (product.stock >= item.quantity) {
+                    product.stock -= item.quantity;
+                    await product.save();
+                    totalAmount += item.quantity * product.price;
+                } else {
+                    failedProducts.push(product._id);
+                }
+            }
+
+            const ticket = await ticketModel.create({
+                amount: totalAmount,
+                purchaser: userId,
+            });
+
+            if (failedProducts.length > 0) {
+                return { ticket, failedProducts };
+            }
+
+            cart.products = cart.products.filter(item => !failedProducts.includes(item.product._id));
+            await cart.save();
+
+            return { ticket, failedProducts };
+        } catch (error) {
+            throw new Error('Failed to finalize purchase: ' + error.message);
         }
     }
 }

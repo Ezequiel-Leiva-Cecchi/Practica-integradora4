@@ -1,5 +1,6 @@
 import { cartDAO } from '../dao/cart/indexCart.js'; 
 import { productDAO } from '../dao/product/indexProducts.js';
+
 export const createCart = async () => {
     try {
         const newCart = await cartDAO.createCart();
@@ -40,13 +41,19 @@ export const addProductToCart = async (cid, pid) => {
         if (existProductInCartIndex >= 0) {
             cart.products[existProductInCartIndex].quantity++;
         } else {
-            cart.products.push({ product: product._id, quantity: 1 });
+            cart.products.push({ 
+                product: product._id, 
+                quantity: 1,
+                title: product.title,
+                price: product.price,
+                imageUrl: product.imageUrl,
+                code: product.code
+            });
         }
 
-        product.stock--;
-        await product.save();
+        product.stock--; 
 
-        await cart.save();
+        await cart.save(); 
     } catch (error) {
         console.error(error)
         throw new Error('Failed to add product to cart: ' + error.message);
@@ -68,5 +75,13 @@ export const deleteProductInCart = async ({ cid, pid }) => {
         await cartDAO.deleteProductCart( cid, pid );
     } catch (error) {
         throw new Error('Failed to delete product from cart');
+    }
+};
+
+export const finalizePurchase = async (cid, userId) => {
+    try {
+        return await cartDAO.finalizePurchase(cid, userId);
+    } catch (error) {
+        throw new Error('Failed to finalize purchase: ' + error.message);
     }
 };

@@ -40,9 +40,9 @@ export const addProduct = async (req, res, next) => {
             throw new Error(`Absent property ${absentProperty}`);
         }
 
-        const owner = user.isPremium ? user.email : 'admin';
+        // const owner = user.isAdmin ? user.email : 'admin';
 
-        const productData = { ...body, owner };
+        const productData = { ...body};
 
         await productsServices.addProduct(productData);
 
@@ -61,11 +61,6 @@ export const editProduct = async (req, res, next) => {
             throw new Error('At least one of the following properties is required: name, price, stock, category, description, code');
         }
         
-        const isOwner = await isProductOwner(productId, user.email);
-        if (!isOwner) {
-            return res.status(403).json({ error: 'You are not authorized to edit this product' });
-        }
-
         await productsServices.editProduct(productId, validation);
         res.json({ message: 'Successfully edit product' });
     } catch (error) {

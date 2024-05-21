@@ -3,32 +3,37 @@ import { createHash } from '../utils/bcrypt.js';
 
 export const register = async (userData) => {
     try {
-        const existingUser = await usersDAO.findUserByEmail(userData.email);
+        const { email, password } = userData;
 
+        // Validar correo electrónico
+        if (!email) {
+            throw new Error('Correo electrónico requerido');
+        }
+
+        // Verificar si el usuario ya existe en la base de datos
+        const existingUser = await usersDAO.findUserByEmail(email);
         if (existingUser) {
-            console.log(existingUser);
-            throw new Error('Email is already in use');
+            throw new Error('El correo electrónico ya está en uso');
         }
 
-        let isAdmin = "User"; 
-
-        if (userData.email === "adminCoder@coder.com" && userData.password === "adminCod3r123") {
-            isAdmin = "Admin"; 
+        // Validar contraseña
+        if (!password || password.length < 6) {
+            throw new Error('La contraseña debe tener al menos 6 caracteres');
         }
 
-        const hashedPassword = createHash(userData.password);
+        const isAdmin = (email === "adminCoder@coder.com" && password === "adminCod3r123") ? "Admin" : "User";
+        const hashedPassword = createHash(password);
 
         const newUser = {
             ...userData,
-            isAdmin: isAdmin, 
+            isAdmin: isAdmin,
             password: hashedPassword
         };
 
         const createdUser = await usersDAO.createUser(newUser);
         return createdUser;
     } catch (error) {
-        console.error("this is the other error:",error);
-        throw new Error('Error registering user');
+        throw error;
     }
 };
 

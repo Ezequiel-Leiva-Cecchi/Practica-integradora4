@@ -34,6 +34,7 @@ export const addProductInCart = async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 export const deleteCart = async (req, res, next) => {
     try {
         const { cid } = req.params;
@@ -54,17 +55,14 @@ export const deleteProductFromCart = async (req, res, next) => {
     }
 };
 
-export const purchaseCart = async (req, res, next) => {
+export const finalizePurchase = async (req, res, next) => {
     try {
         const { cid } = req.params;
-        const cart = await cartService.getCartById(cid);
-        if (cart.products.length === 0) {
-            return res.status(400).json({ error: 'Cart is empty' });
-        }
+        const { userId } = req.user; 
 
-        const purchaseDetails = await cartService.purchaseCart(cart);
+        const result = await cartService.finalizePurchase(cid, userId);
 
-        res.json({ message: 'Purchase completed successfully', purchaseDetails });
+        res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

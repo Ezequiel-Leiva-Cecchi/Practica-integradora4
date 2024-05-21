@@ -1,5 +1,7 @@
 import { passwordResetDAO } from '../dao/passwordReset/indexPasswordReset.js';
-import transporter from '../config/nodemailer.config.js';
+import { usersDAO } from '../dao/users/indexUsers.js'; 
+import { createHash } from '../utils/bcrypt.js';
+import transporter from "../config/nodemailer.config.js";
 
 export const sendEmailRecoveryPassword = async (email, resetToken) => {
     try {
@@ -17,5 +19,24 @@ export const sendEmailRecoveryPassword = async (email, resetToken) => {
     } catch (error) {
         console.error('Error sending password recovery email:', error);
         throw new Error('Error sending password recovery email');
+    }
+};
+
+export const resetPassword = async (resetToken, newPassword) => {
+    try {
+        const resetInfo = await passwordResetDAO.findResetTokenByToken(resetToken);
+        
+        if (!resetInfo) {
+            throw new Error('Invalid or expired reset token');
+        }
+        
+        const hashedPassword = createHash(newPassword);
+        await usersDAO.updateUserPassword(resetInfo.email, hashedPassword);
+        await passwordResetDAO.deleteResetToken(resetToken);
+        
+        console.log('Password reset successfully');
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        throw new Error('Error resetting password');
     }
 };

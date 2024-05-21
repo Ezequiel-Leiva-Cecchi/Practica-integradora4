@@ -1,17 +1,23 @@
 import passport from "passport";
 import * as usersService from '../services/usersServices.js';
 import { usersDAO } from "../dao/users/indexUsers.js";
-
+import {cartDAO} from "../dao/cart/indexCart.js"
 export const register = async (req, res) => {
     try {
-      const userData = req.body;
-      const newUser = await usersService.register(userData); 
-      res.status(201).json({ message: 'Usuario registrado exitosamente', user: newUser });
+        const userData = req.body;
+        const newUser = await usersService.register(userData);
+        
+        await cartDAO.createCart(newUser._id);
+
+        res.status(201).json({ message: 'Usuario registrado exitosamente', user: newUser });
     } catch (error) {
-      console.error( "this is the error" , error);
-      res.status(500).json({ error: 'Error interno del servidor' });
+        console.error("Error al registrar usuario:", error);
+        if (error.message.includes('El correo electrónico ya está en uso')) {
+            return res.status(400).json({ error: error.message });
+        }
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-  };
+};
 
 export const login = async (req, res, next) => {
     try {

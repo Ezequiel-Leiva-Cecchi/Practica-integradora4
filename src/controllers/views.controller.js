@@ -58,3 +58,24 @@ export const renderLoginPage = async (req, res, next) =>{
 export const renderRegisterPage = async ( req, res, next) =>{
     res.render('register',{title:'Register'});
 };
+export const renderSendRecoveryEmailPage = async (req, res, next) => {
+    try {
+        res.render('send-recovery-email', { title: 'Send Recovery Email' });
+    } catch (error) {
+        console.error("Error rendering send recovery email page:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+export const renderAdminPage = async (req, res, next) => {
+    try {
+        const users = await getAllUsers();
+        res.render('admin', {
+            title: 'Administrar Usuarios',
+            users: users
+        });
+    } catch (error) {
+        console.error("Error rendering admin page:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};

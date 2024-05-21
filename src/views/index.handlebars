@@ -25,10 +25,11 @@
     <div class="product-cards">
         {{#each products}}
         <div class="card">
+           <img src="{{this.imageUrl}}" alt="{{this.title}}">
             <h2>{{this.title}}</h2>
+            
             <p>Price: ${{this.price}}</p>
-            <p>Description: {{this.description}}</p>
-            <button class="add-to-cart-btn" data-product-id="{{this.id}}">Add to Cart</button>
+            <button class="add-to-cart-btn" data-product-id="{{this.id}}">More details </button>
         </div>
         {{/each}}
     </div>

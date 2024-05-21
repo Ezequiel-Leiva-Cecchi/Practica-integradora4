@@ -31,9 +31,9 @@ const productsSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users' 
+    imageUrl: {
+        type: String,
+        required:true
     }
 });
 

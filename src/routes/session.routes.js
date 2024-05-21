@@ -12,5 +12,5 @@ sessionRoutes.post('/logout', requireAuth, logout);
 sessionRoutes.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 sessionRoutes.get('/githubcallback', passport.authenticate('github', { failureRedirect: '/login' }), loginWithGithub);
 sessionRoutes.post('/admin/register', requireAdminAuth, createAdmin);
-sessionRoutes.get('/users', requireAuth, getAllUsers);
+sessionRoutes.get('/current', requireAuth, getAllUsers);
 export default sessionRoutes;
