@@ -82,7 +82,7 @@ export class cartMongoose {
         }
     }
 
-    async finalizePurchase(cid, userId) {
+    async finalizePurchase(cid) {
         try {
             const cart = await this.getCartById(cid);
             if (!cart) {
@@ -104,8 +104,7 @@ export class cartMongoose {
             }
 
             const ticket = await ticketModel.create({
-                amount: totalAmount,
-                purchaser: userId,
+                amount: totalAmount
             });
 
             if (failedProducts.length > 0) {

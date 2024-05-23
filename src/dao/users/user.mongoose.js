@@ -6,7 +6,7 @@ export class usersMongoose {
         return await usersModel.findOne({ _id: id }).lean({ virtuals: true });
     }
 
-    async updateUserCart(userId, cartId) {
+    async updateUserCart(userId, cid) {
         try {
             const user = await usersModel.findOneAndUpdate(
                 { _id: userId },

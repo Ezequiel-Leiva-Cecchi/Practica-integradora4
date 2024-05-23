@@ -78,9 +78,34 @@ export const deleteProductInCart = async ({ cid, pid }) => {
     }
 };
 
-export const finalizePurchase = async (cid, userId) => {
+export const finalizePurchase = async (cid) => {
     try {
-        return await cartDAO.finalizePurchase(cid, userId);
+        const cart = await cartDAO.getCartById(cid);
+        if (!cart) {
+            throw new Error('Cart not found');
+        }
+
+        let totalAmount = 0;
+        const failedProducts = [];
+
+        for (const item of cart.products) {
+            const product = await productDAO.getProductById(item.product._id);
+            if (product.stock >= item.quantity) {
+                product.stock -= item.quantity;
+                await product.save();
+                totalAmount += item.quantity * product.price;
+            } else {
+                failedProducts.push(product._id);
+            }
+        }
+
+        if (failedProducts.length > 0) {
+            return { totalAmount, failedProducts };
+        }
+
+        await cartDAO.deleteCart(cid);
+
+        return { totalAmount, failedProducts };
     } catch (error) {
         throw new Error('Failed to finalize purchase: ' + error.message);
     }

@@ -1,33 +1,44 @@
-import orderModel from "../../models/ticket.model.js";
+import TicketModel from "../../models/ticketModel.js";
 
-export class orderMongoose {
-    async createOrder(orderData) {
+export class ticketMongoose {
+    async createTicket(ticketData) {
         try {
-            const newOrder = await orderModel.create(orderData);
-            return newOrder;
+            const ticket = new TicketModel(ticketData);
+            await ticket.save();
+            return ticket.toObject({ virtuals: true });
         } catch (error) {
-            console.error(error);
-            throw new Error('Error al crear la orden');
+            console.error("Error creating ticket:", error);
+            throw new Error('Failed to create ticket');
         }
     }
 
-    async getOrderById(orderId) {
+    // Agrega más métodos según necesites, por ejemplo:
+    async getTicketById(id) {
         try {
-            const order = await orderModel.findById(orderId);
-            return order;
+            const ticket = await TicketModel.findById(id).lean({ virtuals: true });
+            return ticket;
         } catch (error) {
-            console.error(error);
-            throw new Error('Error al obtener la orden');
+            console.error("Error getting ticket by id:", error);
+            throw new Error('Failed to get ticket by id');
         }
     }
 
-    async updateOrderStatus(orderId, newStatus) {
+    async updateTicket(id, updateData) {
         try {
-            const order = await orderModel.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
-            return order;
+            const ticket = await TicketModel.findByIdAndUpdate(id, updateData, { new: true });
+            return ticket;
         } catch (error) {
-            console.error(error);
-            throw new Error('Error al actualizar el estado de la orden');
+            console.error("Error updating ticket:", error);
+            throw new Error('Failed to update ticket');
+        }
+    }
+
+    async deleteTicket(id) {
+        try {
+            await TicketModel.findByIdAndDelete(id);
+        } catch (error) {
+            console.error("Error deleting ticket:", error);
+            throw new Error('Failed to delete ticket');
         }
     }
 }

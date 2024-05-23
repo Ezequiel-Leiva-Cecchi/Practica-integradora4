@@ -1,15 +1,15 @@
-import { orderMongoose } from "./order.mongoose.js";
+import { ticketMongoose } from "./ticket.mongoose.js";
 
-let orderDAO;
+let ticketDAO;
 
 const DAO_OPTION = process.env.DAO_OPTION;
 
-switch(DAO_OPTION) {
+switch (DAO_OPTION) {
     case 'mongoose':
-        orderDAO = new orderMongoose();
+        ticketDAO = new ticketMongoose();
         break;
     default:
-        orderDAO = new orderMongoose();
+        ticketDAO = new ticketMongoose();
 }
 
-export { orderDAO };
+export { ticketDAO };

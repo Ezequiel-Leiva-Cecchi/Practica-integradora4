@@ -1,33 +1,23 @@
-// order.model.js
 import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
-    userId: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users', 
+        ref: 'users',
         required: true
     },
-    items: [{
+    products: [{
         product: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'products',
-            required: true
+            ref: 'products'
         },
-        quantity: {
-            type: Number,
-            required: true
-        }
+        quantity: Number
     }],
     totalAmount: {
         type: Number,
         required: true
-    },
-    purchaseDate: {
-        type: Date,
-        default: Date.now
     }
-});
-
-const orderModel = mongoose.model('Order', orderSchema);
+}, { timestamps: true });
+const orderModel = mongoose.model('orders', orderSchema);
 
 export default orderModel;

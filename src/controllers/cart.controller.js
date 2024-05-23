@@ -57,11 +57,14 @@ export const deleteProductFromCart = async (req, res, next) => {
 
 export const finalizePurchase = async (req, res, next) => {
     try {
-        const { cid } = req.params;
-        const { userId } = req.user; 
+        const { cid} = req.params;
+        
+        const cart = await cartService.getCartById(cid);
+        if (!cart) {
+            return res.status(404).json({ error: 'Cart not found' });
+        }
 
-        const result = await cartService.finalizePurchase(cid, userId);
-
+        const result = await cartService.finalizePurchase(cid, userEmail);
         res.json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
